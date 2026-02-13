@@ -33,7 +33,10 @@ tag3 = 24929
 --- ### mytake
 
 -- don't forget to put the type declaration or you will lose points!
-mytake = undefined
+mytake :: Int -> [a] -> [a]
+mytake 0 _ = []
+mytake _ [] = []
+mytake n (x:xs) = x : mytake (n - 1) xs
 
 --- ### mydrop
 
