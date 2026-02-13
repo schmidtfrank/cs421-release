@@ -36,12 +36,17 @@ tag3 = 24929
 mytake :: Int -> [a] -> [a]
 mytake 0 _ = []
 mytake _ [] = []
-mytake n (x:xs) = x : mytake (n - 1) xs
+mytake n (x:xs) = if n < 0 then mydrop (-n) (x : xs) else x : mytake (n - 1) xs
+--need to handle negative numbers, call mydrop?
 
 --- ### mydrop
 
 -- don't forget to put the type declaration or you will lose points!
-mydrop = undefined
+mydrop :: Int -> [a] -> [a]
+mydrop 0 xs = xs
+mydrop _ [] = []
+mydrop n (x:xs) = if n < 0 then x : xs else mydrop (n-1) xs
+-- need to handle negative numbers
 
 --- ### rev
 
