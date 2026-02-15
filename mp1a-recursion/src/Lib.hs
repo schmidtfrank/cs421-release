@@ -81,6 +81,7 @@ sumlist (x:xs) = x + sumlist xs
 
 -- don't forget to put the type declaration or you will lose points!
 myzip :: [a] -> [b] -> [(a,b)]
+myzip [] [] = []
 myzip [] (x:xs) = []
 myzip (x:xs) [] = []
 myzip (x:xs) (y:ys) = (x,y) : myzip xs ys
@@ -88,17 +89,24 @@ myzip (x:xs) (y:ys) = (x,y) : myzip xs ys
 --- ### addpairs
 
 -- don't forget to put the type declaration or you will lose points!
-addpairs = undefined
+addpairs :: (Num a) => [a] -> [a] -> [a]
+addpairs [] _ = []
+addpairs _ [] = []
+addpairs (x:xs) (y:ys) = aux (myzip (x:xs) (y:ys))
+    where aux [] = []
+          aux (x:xs) = (fst x + snd x) : aux xs
 
 --- ### ones
 
 -- don't forget to put the type declaration or you will lose points!
-ones = undefined
+ones :: [Integer]
+ones = 1 : ones
 
 --- ### nats
 
 -- don't forget to put the type declaration or you will lose points!
-nats = undefined
+nats :: [Integer]
+nats = [0..]
 
 --- ### fib
 
