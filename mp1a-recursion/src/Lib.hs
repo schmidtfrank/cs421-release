@@ -66,17 +66,24 @@ app = undefined
 --- ### inclist
 
 -- don't forget to put the type declaration or you will lose points!
-inclist = undefined
+inclist :: Num a => [a] -> [a]
+inclist [] = []
+inclist (x:xs) = x+1 : inclist xs
 
 --- ### sumlist
 
 -- don't forget to put the type declaration or you will lose points!
-sumlist = undefined
+sumlist :: Num a => [a] -> a
+sumlist [] = 0
+sumlist (x:xs) = x + sumlist xs
 
 --- ### myzip
 
 -- don't forget to put the type declaration or you will lose points!
-myzip = undefined
+myzip :: [a] -> [b] -> [(a,b)]
+myzip [] (x:xs) = []
+myzip (x:xs) [] = []
+myzip (x:xs) (y:ys) = (x,y) : myzip xs ys
 
 --- ### addpairs
 
