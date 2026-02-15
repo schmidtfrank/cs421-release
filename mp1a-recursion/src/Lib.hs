@@ -122,7 +122,12 @@ fib = 0 : 1 : addpairs fib (tail fib)
 --- ### add
 
 -- don't forget to put the type declaration or you will lose points!
-add = undefined
+add :: Ord a => a -> [a] -> [a]
+add a [] = [a]
+add a (x:xs)
+           | a == x = x : xs
+           | a < x = a : x : xs
+           | a > x = x : add a xs
 
 --- ### union
 
