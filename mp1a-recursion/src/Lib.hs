@@ -132,12 +132,26 @@ add a (x:xs)
 --- ### union
 
 -- don't forget to put the type declaration or you will lose points!
-union = undefined
+union :: Ord a => [a] -> [a] -> [a]
+union [] [] = []
+union [] y = y
+union x [] = x
+union (x:xs) (y:ys) 
+                    | x == y = x : union xs ys
+                    | x < y = x : union xs (y:ys)
+                    | x > y = y : union (x:xs) ys
 
 --- ### intersect
 
 -- don't forget to put the type declaration or you will lose points!
-intersect = undefined
+intersect :: Ord a => [a] -> [a] -> [a]
+intersect [] [] = []
+intersect _ [] = []
+intersect [] _ = []
+intersect (x:xs) (y:ys)
+                        | x == y = x : intersect xs ys
+                        | x < y = intersect xs (y:ys)
+                        | x > y = intersect (x:xs) ys
 
 --- ### powerset
 
