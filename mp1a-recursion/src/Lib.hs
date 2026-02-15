@@ -36,7 +36,10 @@ tag3 = 24929
 mytake :: Int -> [a] -> [a]
 mytake 0 _ = []
 mytake _ [] = []
-mytake n (x:xs) = if n < 0 then mydrop (-n) (x : xs) else x : mytake (n - 1) xs
+mytake n (x:xs) = if n < 0 then aux (-n) (x:xs) else x : mytake (n - 1) xs
+    where aux 0 xs = xs
+          aux _ [] = []
+          aux n (x:xs) = aux (n-1) xs
 
 --- ### mydrop
 
@@ -111,7 +114,8 @@ nats = [0..]
 --- ### fib
 
 -- don't forget to put the type declaration or you will lose points!
-fib = undefined
+fib :: [Integer]
+fib = 0 : 1 : addpairs fib (tail fib)
 
 --- Set Theory
 --- ----------
