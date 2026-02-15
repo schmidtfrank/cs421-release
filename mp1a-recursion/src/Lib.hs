@@ -36,10 +36,7 @@ tag3 = 24929
 mytake :: Int -> [a] -> [a]
 mytake 0 _ = []
 mytake _ [] = []
-mytake n (x:xs) = if n < 0 then aux (-n) (x:xs) else x : mytake (n - 1) xs
-    where aux 0 xs = xs
-          aux _ [] = []
-          aux n (x:xs) = aux (n-1) xs
+mytake n (x:xs) = if n < 0 then [] else x : mytake (n - 1) xs
 
 --- ### mydrop
 
@@ -64,7 +61,9 @@ rev (x:xs) = aux [] (x:xs)
 --- ### app
 
 -- don't forget to put the type declaration or you will lose points!
-app = undefined
+app :: [a] -> [a] -> [a]
+app [] ys = ys
+app (x:xs) ys = x : (app xs ys)
 
 --- ### inclist
 
