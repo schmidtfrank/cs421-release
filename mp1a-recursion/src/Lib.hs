@@ -37,7 +37,6 @@ mytake :: Int -> [a] -> [a]
 mytake 0 _ = []
 mytake _ [] = []
 mytake n (x:xs) = if n < 0 then mydrop (-n) (x : xs) else x : mytake (n - 1) xs
---need to handle negative numbers, call mydrop?
 
 --- ### mydrop
 
@@ -51,7 +50,13 @@ mydrop n (x:xs) = if n < 0 then x : xs else mydrop (n-1) xs
 --- ### rev
 
 -- don't forget to put the type declaration or you will lose points!
-rev = undefined
+rev :: [a] -> [a]
+rev [] = []
+rev [a] = [a]
+rev (x:xs) = aux [] (x:xs)
+    where   aux a [] = a
+            aux a (x:xs) = aux (x:a) xs
+         
 
 --- ### app
 
