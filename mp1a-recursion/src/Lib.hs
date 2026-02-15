@@ -164,9 +164,11 @@ powerset = undefined
 --- ### inclist'
 
 -- don't forget to put the type declaration or you will lose points!
-inclist' = undefined
+inclist' :: Num a => [a] -> [a]
+inclist' xs = P.map (+1) xs
 
 --- ### sumlist'
 
 -- don't forget to put the type declaration or you will lose points!
-sumlist' = undefined
+sumlist' :: Num a => [a] -> a
+sumlist' xs = P.foldl (\acc x -> acc + x) 0 xs
