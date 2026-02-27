@@ -172,3 +172,7 @@ inclist' xs = P.map (+1) xs
 -- don't forget to put the type declaration or you will lose points!
 sumlist' :: Num a => [a] -> a
 sumlist' xs = P.foldl (\acc x -> acc + x) 0 xs
+
+dropWhile :: (a -> Bool) -> [a] -> [a]
+dropWhile f [] = []
+dropWhile f (x:xs) = if (f (x)) then dropWhile f xs else x : dropWhile f xs
