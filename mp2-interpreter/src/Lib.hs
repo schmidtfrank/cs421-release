@@ -107,21 +107,37 @@ eval (BoolExp i) _ = BoolVal i
 
 --- ### Variables
 
-eval (VarExp s) env = undefined
+eval (VarExp s) env = maybe (ExnVal "No match in env") id (H.lookup s env)
 
 --- ### Arithmetic
 
-eval (IntOpExp op e1 e2) env = undefined
+eval (IntOpExp op e1 e2) env = 
+    let v1 = eval e1 env
+        v2 = eval e2 env
+        Just f = H.lookup op intOps
+    in if op == "/" && v2 == IntVal 0 then ExnVal "Division by 0" else liftIntOp f v1 v2
 
 --- ### Boolean and Comparison Operators
 
-eval (BoolOpExp op e1 e2) env = undefined
+eval (BoolOpExp op e1 e2) env = 
+    let v1 = eval e1 env
+        v2 = eval e2 env
+        Just f = H.lookup op boolOps
+    in liftBoolOp f v1 v2
 
-eval (CompOpExp op e1 e2) env = undefined
+eval (CompOpExp op e1 e2) env = 
+    let v1 = eval e1 env
+        v2 = eval e2 env 
+        Just f = H.lookup op compOps 
+    in liftCompOp f v1 v2
 
 --- ### If Expressions
 
-eval (IfExp e1 e2 e3) env = undefined
+eval (IfExp e1 e2 e3) env =
+    let comp = eval e1 env
+    in if comp == BoolVal True then eval e2 env
+       else if comp == BoolVal False then eval e3 env 
+       else ExnVal "Condition is not a bool"
 
 --- ### Functions and Function Application
 
