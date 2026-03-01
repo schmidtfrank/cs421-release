@@ -137,17 +137,23 @@ eval (IfExp e1 e2 e3) env =
     let comp = eval e1 env
     in if comp == BoolVal True then eval e2 env
        else if comp == BoolVal False then eval e3 env 
-       else ExnVal "Condition is not a bool"
+       else ExnVal "Condition is not a Bool"
 
 --- ### Functions and Function Application
 
-eval (FunExp params body) env = undefined
+eval (FunExp params body) env = CloVal params body env
 
-eval (AppExp e1 args) env = undefined
+eval (AppExp e1 args) env = aux (eval e1 env) args
+    where aux (CloVal params body env) args = eval body (insertion params args env)
+            where insertion [] [] env = env 
+                  insertion (x:xs) (y:ys) env = insertion xs ys (H.insert x (eval y env) env)
+          aux _ args = ExnVal "Apply to non-closure"
 
 --- ### Let Expressions
 
-eval (LetExp pairs body) env = undefined
+eval (LetExp pairs body) env = eval body (aux pairs env)
+    where aux [] env = env
+          aux ((x,y):xs) env = aux xs (H.insert x (eval y env) env)
 
 --- Statements
 --- ----------
@@ -161,18 +167,24 @@ exec (PrintStmt e) penv env = (val, penv, env)
 
 --- ### Set Statements
 
-exec (SetStmt var e) penv env = undefined
+exec (SetStmt var e) penv env = ("", penv, H.insert var (eval e env) env)
 
 --- ### Sequencing
 
-exec (SeqStmt []) penv env = undefined
+exec (SeqStmt []) penv env = ("", penv,env)
+exec (SeqStmt (x:xs)) penv env = (aux (x:xs) env, penv, env)
+    where aux [] env = []
+          aux ((PrintStmt x):xs) env = show (eval x env) ++ aux xs env
 
 --- ### If Statements
 
-exec (IfStmt e1 s1 s2) penv env = undefined
+exec (IfStmt e1 s1 s2) penv env = aux (eval e1 env) s1 s2 penv env
+    where aux (BoolVal True) s1 s2 penv env = exec s1 penv env
+          aux (BoolVal False) s1 s2 penv env = exec s2 penv env
+          aux _ s1 s2 penv env = ("exn: Condition is not a Bool", penv, env)
 
 --- ### Procedure and Call Statements
 
-exec p@(ProcedureStmt name args body) penv env = undefined
+exec p@(ProcedureStmt name args body) penv env = (name, penv, env)
 
 exec (CallStmt name args) penv env = undefined
