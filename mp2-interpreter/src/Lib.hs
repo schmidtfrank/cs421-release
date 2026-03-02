@@ -143,11 +143,15 @@ eval (IfExp e1 e2 e3) env =
 
 eval (FunExp params body) env = CloVal params body env
 
-eval (AppExp e1 args) env = aux (eval e1 env) args
-    where aux (CloVal params body env) args = eval body (insertion params args env)
-            where insertion [] [] env = env 
-                  insertion (x:xs) (y:ys) env = insertion xs ys (H.insert x (eval y env) env)
-          aux _ args = ExnVal "Apply to non-closure"
+eval (AppExp e1 args) env = 
+    let 
+        evaled = map (\a -> eval a env) args
+    in case eval e1 env of
+        CloVal params body cloEnv -> eval body (insertion params evaled cloEnv)
+        _ -> ExnVal "Apply to non-closure"
+    where
+        insertion [] [] env' = env'
+        insertion (x:xs) (y:ys) env' = insertion xs ys (H.insert x y env')
 
 --- ### Let Expressions
 
@@ -172,9 +176,12 @@ exec (SetStmt var e) penv env = ("", penv, H.insert var (eval e env) env)
 --- ### Sequencing
 
 exec (SeqStmt []) penv env = ("", penv,env)
-exec (SeqStmt (x:xs)) penv env = (aux (x:xs) env, penv, env)
-    where aux [] env = []
-          aux ((PrintStmt x):xs) env = show (eval x env) ++ aux xs env
+exec (SeqStmt (x:xs)) penv env = aux (x:xs) penv env
+    where aux [] penv env = ("", penv, env)
+          aux (x:xs) penv env =
+            let (str, penv', env') = exec x penv env
+                (str2, penv2, env2) = aux xs penv' env'
+            in (str ++ str2, penv2, env2)
 
 --- ### If Statements
 
@@ -185,6 +192,13 @@ exec (IfStmt e1 s1 s2) penv env = aux (eval e1 env) s1 s2 penv env
 
 --- ### Procedure and Call Statements
 
-exec p@(ProcedureStmt name args body) penv env = (name, penv, env)
+exec p@(ProcedureStmt name args body) penv env = ("", H.insert name p penv, env)
 
-exec (CallStmt name args) penv env = undefined
+exec (CallStmt name args) penv env = maybe ("Procedure " ++ name ++ " undefined.", penv, env) aux (H.lookup name penv)
+    where aux (ProcedureStmt _ procArgs body) = 
+                let evaled = map (\a -> eval a env) args
+                    newEnv = insertion procArgs evaled env
+                in exec body penv newEnv
+            where insertion [] [] env' = env'
+                  insertion (x:xs) (y:ys) env' = insertion xs ys (H.insert x y env')
+ 
